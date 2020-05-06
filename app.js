@@ -7,7 +7,7 @@ var express = require("express"),
 
 mongoose
   .connect(
-    "mongodb+srv://olusoji:3766inatlas@cluster0-pb3o1.mongodb.net/test?retryWrites=true&w=majority",
+    "mongodb+srv://olusoji1:3766inatlas@cluster0-pb3o1.mongodb.net/test?retryWrites=true&w=majority",
     { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true }
   )
   .then(() => {
