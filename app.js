@@ -5,7 +5,12 @@ var express = require("express"),
   expressSanitizer = require("express-sanitizer"),
   app = express();
 
-mongoose
+mongoose.connect("mongodb://localhost/BlogApp", {
+  useUnifiedTopology: true,
+  useNewUrlParser: true,
+});
+
+/*mongoose
   .connect(
     "mongodb+srv://olusoji1:3766inatlas@cluster0-pb3o1.mongodb.net/test?retryWrites=true&w=majority",
     { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true }
@@ -15,7 +20,7 @@ mongoose
   })
   .catch((err) => {
     console.log("ERROR:", err.message);
-  });
+  });*/
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use(bodyParser.json());
@@ -28,9 +33,21 @@ var blogSchema = new mongoose.Schema({
   title: String,
   image: String,
   body: String,
+  comments: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Comment",
+    },
+  ],
   created: { type: Date, default: Date.now },
 });
 var Blog = mongoose.model("Blog", blogSchema);
+
+var commentSchema = new mongoose.Schema({
+  author: String,
+  content: String,
+});
+var Comment = mongoose.model("Comment", commentSchema);
 
 //Restful routes
 app.get("/", function (req, res) {
@@ -68,13 +85,15 @@ app.post("/blogs", function (req, res) {
 
 //SHOW ROUTE
 app.get("/blogs/:id", function (req, res) {
-  Blog.findById(req.params.id, function (err, foundBlog) {
-    if (err) {
-      res.render("/blogs");
-    } else {
-      res.render("show", { blog: foundBlog });
-    }
-  });
+  Blog.findById(req.params.id)
+    .populate("comments")
+    .exec(function (err, foundBlog) {
+      if (err) {
+        res.render("/blogs");
+      } else {
+        res.render("show", { blog: foundBlog });
+      }
+    });
 });
 
 //EDIT ROUTE
@@ -114,7 +133,48 @@ app.delete("/blogs/:id", function (req, res) {
     }
   });
 });
+//COMMENT
+app.get("/blogs/:id/comment/new", function (req, res) {
+  //find the blog u want to comment on and store whatever u find in foundBlog
+  Blog.findById(req.params.id, function (err, foundBlog) {
+    if (err) {
+      console.log("Error", err.message);
+    } else {
+      res.render("newcomment", { foundBlog: foundBlog });
+    }
+  });
+});
 
-app.listen(process.env.PORT, function () {
+app.post("/blogs/:id/comment", function (req, res) {
+  // get the name and content coming from the form
+  var author = req.body.author;
+  var content = req.body.content;
+  // first get the blog post
+  Blog.findById(req.params.id, function (err, foundBlog) {
+    if (err) {
+      console.log("Error");
+    } else {
+      Comment.create({ author: author, content: content }, function (
+        err,
+        comment
+      ) {
+        if (err) {
+          res.redirect("/blogs");
+        } else {
+          //comment.save();
+          foundBlog.comments.push(comment);
+          foundBlog.save();
+          res.redirect("/blogs/" + foundBlog._id);
+        }
+      });
+    }
+    // then use it to create a comment
+  });
+});
+
+/*app.listen(process.env.PORT, function () {
+  console.log("Server is working");
+});*/
+app.listen(8080, function () {
   console.log("Server is working");
 });

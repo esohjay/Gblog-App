@@ -22,6 +22,10 @@
         <button class="ui red basic button">Delete</button>
       </form>
     </div>
+    <a href="/blogs/<%=blog._id%>/comment/new"> Add comment</a>
   </div>
 </div>
-<%- include ('partials/footer') -%>
+<% blog.comments.forEach (function(comm){%>
+<div><%=comm.author%></div>
+<p><%=comm.content%></p>
+<%})%> <%- include ('partials/footer') -%>
