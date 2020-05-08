@@ -3,7 +3,16 @@ var express = require("express"),
   mongoose = require("mongoose"),
   methodOverride = require("method-override"),
   expressSanitizer = require("express-sanitizer"),
-  app = express();
+  passport = require("passport"),
+  LocalStrategy = require("passport-local"),
+  passportLocalMongoose = require("passport-local-mongoose"),
+  User = require("./models/user"),
+  Comment = require("./models/comment"),
+  Blog = require("./models/blog"),
+  commentRoutes = require("./routes/comment"),
+  blogRoutes = require("./routes/blog"),
+  flash = require("connect-flash");
+(indexRoutes = require("./routes/index")), (app = express());
 
 mongoose.connect("mongodb://localhost/BlogApp", {
   useUnifiedTopology: true,
@@ -21,6 +30,7 @@ mongoose.connect("mongodb://localhost/BlogApp", {
   .catch((err) => {
     console.log("ERROR:", err.message);
   });*/
+app.use(flash());
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use(bodyParser.json());
@@ -28,153 +38,38 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressSanitizer());
 app.use(methodOverride("_method"));
 
-//App config
-var blogSchema = new mongoose.Schema({
-  title: String,
-  image: String,
-  body: String,
-  comments: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Comment",
-    },
-  ],
-  created: { type: Date, default: Date.now },
+//PASSPORT CONFIGURATION
+app.use(
+  require("express-session")({
+    secret: "This is a secret",
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+app.use(function (req, res, next) {
+  res.locals.error = req.flash("error");
+  res.locals.success = req.flash("success");
+  res.locals.currentUser = req.user;
+  next();
 });
-var Blog = mongoose.model("Blog", blogSchema);
 
-var commentSchema = new mongoose.Schema({
-  author: String,
-  content: String,
-});
-var Comment = mongoose.model("Comment", commentSchema);
+//App config
 
 //Restful routes
-app.get("/", function (req, res) {
-  res.redirect("/blogs");
-});
-
-app.get("/blogs", function (req, res) {
-  Blog.find({}, function (err, blogs) {
-    if (err) {
-      console.log("ERROR PAGE");
-    } else {
-      res.render("index", { blogs: blogs });
-    }
-  });
-});
 
 //New route
-app.get("/new", function (req, res) {
-  res.render("new");
-});
-
-app.post("/blogs", function (req, res) {
-  req.body.blog.body = req.sanitize(req.body.blog.body);
-
-  //create blog
-  var data = req.body.blog;
-  Blog.create(data, function (err, newBlog) {
-    if (err) {
-      res.render("new");
-    } else {
-      res.redirect("/");
-    }
-  });
-});
-
-//SHOW ROUTE
-app.get("/blogs/:id", function (req, res) {
-  Blog.findById(req.params.id)
-    .populate("comments")
-    .exec(function (err, foundBlog) {
-      if (err) {
-        res.render("/blogs");
-      } else {
-        res.render("show", { blog: foundBlog });
-      }
-    });
-});
-
-//EDIT ROUTE
-app.get("/blogs/:id/edit", function (req, res) {
-  Blog.findById(req.params.id, function (err, foundBlog) {
-    if (err) {
-      res.redirect("/blogs");
-    } else {
-      res.render("edit", { blog: foundBlog });
-    }
-  });
-});
-
-//UPDATE ROUTE
-app.put("/blogs/:id", function (req, res) {
-  req.body.blog.body = req.sanitize(req.body.blog.body);
-
-  Blog.findByIdAndUpdate(req.params.id, req.body.blog, function (
-    err,
-    updatedBlog
-  ) {
-    if (err) {
-      res.redirect("/blogs");
-    } else {
-      res.redirect("/blogs/" + req.params.id);
-    }
-  });
-});
-
-//DELETE ROUTE
-app.delete("/blogs/:id", function (req, res) {
-  Blog.findByIdAndRemove(req.params.id, function (err) {
-    if (err) {
-      res.redirect("/blogs");
-    } else {
-      res.redirect("/blogs");
-    }
-  });
-});
-//COMMENT
-app.get("/blogs/:id/comment/new", function (req, res) {
-  //find the blog u want to comment on and store whatever u find in foundBlog
-  Blog.findById(req.params.id, function (err, foundBlog) {
-    if (err) {
-      console.log("Error", err.message);
-    } else {
-      res.render("newcomment", { foundBlog: foundBlog });
-    }
-  });
-});
-
-app.post("/blogs/:id/comment", function (req, res) {
-  // get the name and content coming from the form
-  var author = req.body.author;
-  var content = req.body.content;
-  // first get the blog post
-  Blog.findById(req.params.id, function (err, foundBlog) {
-    if (err) {
-      console.log("Error");
-    } else {
-      Comment.create({ author: author, content: content }, function (
-        err,
-        comment
-      ) {
-        if (err) {
-          res.redirect("/blogs");
-        } else {
-          //comment.save();
-          foundBlog.comments.push(comment);
-          foundBlog.save();
-          res.redirect("/blogs/" + foundBlog._id);
-        }
-      });
-    }
-    // then use it to create a comment
-  });
-});
 
 /*app.listen(process.env.PORT, function () {
   console.log("Server is working");
 });*/
+app.use(indexRoutes);
+app.use(commentRoutes);
+app.use(blogRoutes);
 app.listen(8080, function () {
   console.log("Server is working");
 });

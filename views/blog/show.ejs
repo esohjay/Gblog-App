@@ -1,4 +1,4 @@
-<%- include ('partials/header') -%>
+<%- include ('../partials/header') -%>
 
 <div class="ui main text container segment">
   <div class="ui huge header"><%= blog.title %></div>
@@ -10,7 +10,11 @@
       </div>
       <div class="description">
         <p><%= blog.body %></p>
+        <p>
+          <em>Created by: <%= blog.author.username %></em>
+        </p>
       </div>
+      <% if (currentUser && blog.author.id.equals(currentUser._id)){%>
       <a class="ui orange basic button" href="/blogs/<%= blog._id %>/edit"
         >Edit</a
       >
@@ -21,11 +25,23 @@
       >
         <button class="ui red basic button">Delete</button>
       </form>
+      <%}%>
     </div>
     <a href="/blogs/<%=blog._id%>/comment/new"> Add comment</a>
   </div>
 </div>
-<% blog.comments.forEach (function(comm){%>
-<div><%=comm.author%></div>
-<p><%=comm.content%></p>
-<%})%> <%- include ('partials/footer') -%>
+<% blog.comments.forEach (function(comment){%>
+<div><%=comment.author.username%></div>
+<p><%=comment.content%></p>
+<% if (currentUser && comment.author.id.equals(currentUser._id)){%>
+<a class="ui orange basic button" href="/blogs/<%=blog._id%>/comment/<%=comment._id%>/edit">Edit</a>
+<form
+        class="delete"
+        action="/blogs/<%=blog._id%>/comment/<%=comment._id%>?_method=DELETE"
+        method="POST"
+      >
+        <button class="ui red basic button">Delete</button>
+      </form>
+      <%}%>
+    </div>
+<%})%> <%- include ('../partials/footer') -%>

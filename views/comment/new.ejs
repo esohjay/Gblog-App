@@ -1,7 +1,6 @@
 <h1>New comment <%=foundBlog.title%></h1>
 
 <form action="/blogs/<%= foundBlog._id%>/comment" method="POST">
-  <input type="text" name="author" placeholder="Name" />
   <input type="text" name="content" placeholder="Comment" />
   <input type="submit" value="Submit" />
 </form>
