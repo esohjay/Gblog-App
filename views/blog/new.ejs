@@ -1,22 +1,49 @@
 <%- include ('../partials/header') -%>
+<div class="container">
+  <div class="formgrp">
+    <h3>New Blog</h3>
+    <form action="/blogs" method="POST" enctype="multipart/form-data">
+      <div class="form-group">
+        <input
+          type="text"
+          name="title"
+          class="myctrl form-control"
+          placeholder="Title"
+          required
+        />
+      </div>
+      <div class="field">
+        <input
+          class="readmore btn myctrl"
+          type="file"
+          id="image"
+          name="blogImage"
+          accept="blogImage/*"
+          required
+        />
+      </div>
+      <div class="form-group">
+        <input
+          class="myctrl form-control"
+          type="text"
+          id="showimage"
+          name="showimage"
+          accept="blogImage/*"
+          required
+        />
+      </div>
+      <div class="form-group">
+        <textarea
+          class="myctrl form-control"
+          name="text"
+          cols="30"
+          rows="10"
+          required
+        ></textarea>
+      </div>
 
-<div class="ui main text container segment">
-  <div class="ui huge header">New Blog</div>
-  <form class="ui form" action="/blogs" method="POST">
-    <div class="field">
-      <label for="title">Title</label>
-      <input type="text" name="title" placeholder="Title" />
-    </div>
-    <div class="field">
-      <label for="Image"></label>
-      <input type="text" name="image" placeholder="image" />
-    </div>
-    <div class="field">
-      <label for="Body"></label>
-      <textarea name="text" cols="30" rows="10"></textarea>
-    </div>
-
-    <input class="ui violet basic button" type="submit" />
-  </form>
+      <input class="readmore btn myctrl" value="Post" type="submit" />
+    </form>
+  </div>
 </div>
 <%- include ('../partials/footer') -%>

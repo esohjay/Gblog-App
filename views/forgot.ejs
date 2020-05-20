@@ -1,0 +1,26 @@
+<%- include ('partials/header') -%>
+<div class="container">
+  <div class="formgrp">
+    <form action="/forgot" method="POST">
+      <h3>Forgot Password</h3>
+      <div class="form-group">
+        <input
+          type="email"
+          name="email"
+          autofocus
+          class="form-control myctrl"
+          placeholder="Enter your emaill address"
+        />
+      </div>
+      <div class="form-group">
+        <input
+          type="submit"
+          class="btn readmore myctrl"
+          value="Reset Password"
+        />
+      </div>
+    </form>
+  </div>
+</div>
+
+<%- include ('partials/footer') -%>

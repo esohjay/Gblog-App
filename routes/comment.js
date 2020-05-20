@@ -42,6 +42,7 @@ router.post("/blogs/:id/comment", middleware.isLoggedIn, function (req, res) {
           comment.save();
           foundBlog.comments.push(comment);
           foundBlog.save();
+          req.flash("success", "Thanks for your contribution");
           res.redirect("/blogs/" + foundBlog._id);
         }
       });
@@ -76,11 +77,13 @@ router.put(
   function (req, res) {
     Comment.findByIdAndUpdate(
       req.params.comment_id,
-      req.body.comment,
+      req.body.content,
       function (err, updatedComment) {
         if (err) {
+          req.flash("error", err.message);
           res.redirect("back");
         } else {
+          req.flash("success", "Updated successfully");
           res.redirect("/blogs/" + req.params.id);
         }
       }
@@ -97,6 +100,7 @@ router.delete(
       if (err) {
         res.redirect("/blogs");
       } else {
+        req.flash("success", "Comment deleted successfully");
         res.redirect("/blogs/" + req.params.id);
       }
     });

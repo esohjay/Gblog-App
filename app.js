@@ -1,3 +1,4 @@
+require("dotenv").config();
 var express = require("express"),
   bodyParser = require("body-parser"),
   mongoose = require("mongoose"),
@@ -11,34 +12,51 @@ var express = require("express"),
   Blog = require("./models/blog"),
   commentRoutes = require("./routes/comment"),
   blogRoutes = require("./routes/blog"),
-  flash = require("connect-flash");
-(indexRoutes = require("./routes/index")), (app = express());
-
-mongoose.connect("mongodb://localhost/BlogApp", {
-  useUnifiedTopology: true,
-  useNewUrlParser: true,
-});
+  flash = require("connect-flash"),
+  indexRoutes = require("./routes/index"),
+  GridFsStorage = require("multer-gridfs-storage"),
+  Grid = require("gridfs-stream"),
+  path = require("path"),
+  app = express();
 
 /*mongoose
-  .connect(
-    "mongodb+srv://olusoji1:3766inatlas@cluster0-pb3o1.mongodb.net/test?retryWrites=true&w=majority",
-    { useUnifiedTopology: true, useNewUrlParser: true, useCreateIndex: true }
-  )
+  .connect(process.env.DATABASEURL, {
+    useUnifiedTopology: true,
+
+    useCreateIndex: true,
+    useNewUrlParser: true,
+  })
   .then(() => {
     console.log("Connected to DB");
   })
   .catch((err) => {
     console.log("ERROR:", err.message);
   });*/
+
+mongoose
+  .connect(process.enc.DB_URL, {
+    useUnifiedTopology: true,
+    useNewUrlParser: true,
+    useCreateIndex: true,
+  })
+  .then(() => {
+    console.log("Connected to DB");
+  })
+  .catch((err) => {
+    console.log("ERROR:", err.message);
+  });
 app.use(flash());
 app.set("view engine", "ejs");
 app.use(express.static("public"));
+app.use("/public", express.static("public"));
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressSanitizer());
 app.use(methodOverride("_method"));
 
 //PASSPORT CONFIGURATION
+app.locals.moment = require("moment");
 app.use(
   require("express-session")({
     secret: "This is a secret",

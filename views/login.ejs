@@ -1,8 +1,31 @@
 <%- include ('./partials/header') -%>
-<h1>Login</h1>
-<form action="/login" method="POST">
-  <input type="text" name="username" placeholder="Username" />
-  <input type="password" name="password" placeholder="Password" />
-  <button>Login</button>
-</form>
+<div class="container">
+  <div class="formgrp">
+    <h3 class="logreg">Login</h3>
+    <form action="/login" method="POST">
+      <div class="form-group">
+        <input
+          type="text"
+          class="form-control myctrl"
+          name="username"
+          placeholder="Username"
+        />
+      </div>
+      <div class="form-group">
+        <input
+          type="password"
+          class="form-control myctrl"
+          name="password"
+          placeholder="Password"
+        />
+      </div>
+      <input type="submit" value="Login" class="readmore btn myctrl" />
+    </form>
+    <div class="logreg">
+      <a href="/forgot">Forgot your password?</a>
+      <p>Don't have an account? <a href="/register">Sign up</a></p>
+    </div>
+    <a class="btn readmore" href="/">Go back</a>
+  </div>
+</div>
 <%- include ('./partials/footer') -%>

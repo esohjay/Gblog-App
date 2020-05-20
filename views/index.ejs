@@ -1,37 +1,124 @@
 <%- include ('partials/header') -%>
-<div class="ui main text container">
-  <div class="ui huge header">
-    MY BLOG
+<div class="jumbotron jumbotron-fluid" id="up">
+  <div class="container">
+    <h1 class="display-4">Wecolme to my GinaBlog</h1>
+    <p class="lead"> I'm goal is to satisfy you with all best contents you can think of</p>
+   <div class="search-box">
+      <form action="/blogs" method="GET">
+        <input class="search-text" type="text" name="search" placeholder="Search" />
+        <button class="btn readmore" href=""><i class="fas fa-search"></i></button>
+        
+      </form>
+    </div>
+   
+    
+    <h4>Subscribe to get my lastest blog post</h4>
+    <form action="/subscribe" method="POST">
+    <div class="form-group">
+     
+      <label for="emailaddres">Email address</label>
+      <input
+        type="email"
+        placeholder="Email address"
+        name="email"
+        class="form-control jomb"
+        id="exampleInputEmail1"
+        aria-describedby="emailHelp"
+      />
+      
+    </div>
+    <button type="submit" class="btn readmore subbtn">Subscribe</button>
+  </form>
+</div>
   </div>
-  <div class="ui top attached segment">
-    <div class="ui divided items">
-      <% blogs.forEach(function(blog){%>
-      <div class="item">
-        <div class="image">
-          <img src="<%= blog.image %>" alt="" />
-        </div>
-        <div class="content">
-          <a class="header" href="/blogs/<%= blog._id %>">
-            <%= blog.title %>
-          </a>
-          <div class="meta">
-            <span><%= blog.created.toDateString() %></span>
-          </div>
-          <div class="description">
-            <p><%- blog.text.substring(0,100) %>...</p>
-          </div>
-          <div class="extra">
-            <a
-              class="ui floated basic violet button"
-              href="/blogs/<%= blog._id %>"
-              >Read more
-              <i class="right chevron icon"></i>
-            </a>
-          </div>
-        </div>
+</div>
+<% blogs.forEach(function(blog){%>
+<div class="card mb-3 section">
+  
+  <div class="row no-gutters">
+    <div class="col-md-4 img-container">
+     <a href="/blogs/<%= blog._id %>"> <img  src="<%= blog.blogImage %>" class="card-img" alt="post image"></a>
+    </div>
+    <div class="col-md-8">
+      <div class="card-body">
+        <h3 class="card-title"><a href="/blogs/<%= blog._id %>">
+          <%= blog.title %>
+        </a>
+      </h3>
+      <span><%= blog.created.toDateString() %></span>
+      <div class="text-sec">
+        <p class="card-text"><%- blog.text.substring(0,150) %>...</p>
+        <p class="card-text"><small class="text-muted"><span><%= blog.created.toDateString() %></span></small></p>
+        <a class="readmore btn" href="/blogs/<%= blog._id %>" role="button">
+          Read more  <i class="fas fa-angle-double-right"></i>
+        </a>
       </div>
-      <%}) %>
+      </div>
     </div>
   </div>
 </div>
+<%}) %>
+
+<!--Pagination start-->
+<div aria-label="Page navigation paginate">
+<%if (pages && pages > 0){%>
+  <ul class="pagination justify-content-center">
+    <%if (current == 1){%>
+<li class="page-item disabled"><a class="page-link">First</a>
+
+</li>
+<%}else{%>
+<li><a class="page-link" href="/blogs<%if(search){%>?search=<%= search %><%}%>">First</a></li>
+<%}%>
+<% if (current == 1){%>
+  <li class="page-item disabled"><a class='page-link'><<</a></li>
+<%}else{%>
+<li><a class="page-link" href="/blogs?page=<%= Number(current) - 1 %><%if(search){%>&search=<%= search %><%}%>"><<</a></li>
+<%}%>
+
+<% var i = (Number(current) > 5 ? Number(current) - 4 : 1)%>
+<% if (i !== 1){%>
+<li class="page-item disabled"><a class="page-link">...</a></li>
+<%}%>
+<% for (; i <= (Number(current) + 4) && i <= pages; i++){%>
+<% if (i == current){%>
+<li class="active"><a class="page-link"><%= i %></a></li>
+<%}else{%>
+<li><a class="page-link" href="/blogs?page=<%= i %>"><%if(search){%>&search=<%= search %><%}%><%= i %></a></li>
+<%}%>
+<% if (i == Number(current) + 4 && i < pages){%>
+<li class="page-item disabled"><a class="page-link">...</a></li>
+<%}%>
+<%}%>
+<% if (current == pages){%>
+<li class="page-item disabled"><a class="page-link" >>></a></li>
+<%}else{%>
+<li><a class="page-link" href="/blogs?page=<%= Number(current) + 1 %><%if(search){%>&search=<%= search %><%}%>">>></a></li>
+<%}%>
+<% if (current == pages){%>
+<li class="page-item disabled"><a class="page-link">Last</a></li>
+<%}else{%>
+  <li><a class="page-link" href="/blogs?page=<%= pages %><%if(search){%>&search=<%= search %><%}%>">Last</a></li>
+
+<%}%>
+</ul>
+<%}%>
+</nav>
+<!--Paginationd end-->
+
+
+
+<!--About section-->
+<section class="abt-section" id="about">
+  <div class="abt-content">
+  <div class=" rounded-pill abt-img">
+    <img class="rounded-pill " src="/public/aboutphoto.jpg" alt="">
+  </div>
+  <div class="about-p">
+  <h3>About me</h3>
+    <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Atque aut molestiae voluptas neque necessitatibus adipisci blanditiis odio unde cum accusamus non, ducimus, vero tenetur tempore!</p>
+  </div>
+</div>
+</section>
+<%- include ('partials/info') -%>
 <%- include ('partials/footer') -%>

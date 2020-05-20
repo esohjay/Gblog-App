@@ -1,0 +1,163 @@
+<%- include ('partials/header') -%>
+<div class="container">  
+<div class="btitle" >
+ 
+    <h3><%= blog.title %></h3>
+    <em>Created by: <%= blog.author.username %> <%= blog.author.lastname %></em>
+    <p style="color: grey;">Last updated: <%= blog.created.toDateString() %></p>
+  </div>
+  <div class="showimagecont"> 
+      <img class="img-thumbnail" src="<%= blog.showimage %>" alt="<%= blog.title %>" />
+    </div>
+ 
+    <div class="blogtext">
+      <p><%- blog.text %></p>
+    </div>
+      <% if (currentUser && blog.author.id.equals(currentUser._id) ||
+      currentUser && currentUser.isAdmin){%>
+      <a class="btn btn-xs btn-warning" href="/blogs/<%= blog._id %>/edit"
+        >Edit</a
+      >
+      <form
+        class="delete"
+        action="/blogs/<%= blog._id %>?_method=DELETE"
+        method="POST"
+      >
+        <button class="btn btn-xs btn-danger">Delete</button>
+      </form>
+      <%}%>
+    </div>
+    <br><hr>
+  </div>
+</div>
+</div>
+<!--COMMENT SECTION START-->
+<div class=" container">
+
+
+<button class="btn readmore" type="button" data-toggle="collapse" data-target="#collapseComment" aria-expanded="false" aria-controls="collapseComment">
+  <i class="fas fa-plus"></i> Add Comment
+</button>
+<h4 style="color: rgb(121, 63, 63);">
+  <strong
+    >Comments
+  </strong>
+</h4>
+<div class="collapse container" id="collapseComment">
+<div class="card card-body formgrp" >
+  <div class="well" style="border-left: 5px solid rgb(121, 63, 63);;">
+    <% if(!currentUser) { %>
+    <!--If the user is not logged in, direct him to the login page-->
+    <p>
+      You need to login before you can comment.
+      <a href="/login">Click here</a> to go to the login page.
+    </p>
+    <% } %> <% if(currentUser) { %>
+  
+      <h3>
+         Write your comment <i class="fas fa-pen"></i>...
+        
+      </h3>
+      <form
+        id="add-comment-form"
+        action="/blogs/<%= blog._id%>/comment"
+        method="POST"
+      >
+        <div class="form-group">
+          <input
+            class="form-control myctrl"
+            type="text"
+            disabled
+            value="<%= currentUser.username %>"
+          />
+        </div>
+        <div class="form-group">
+          <textarea
+            class="form-control myctrl"
+            name="content"
+            placeholder="Write your comment..."
+            form="add-comment-form"
+            rows="5"
+            cols="70"
+          ></textarea>
+        </div>
+        <div class="form-group">
+          <button class="btn readmore btn-sm">
+            Comment
+            <span class="glyphicon glyphicon-comment" aria-hidden="true"></span>
+          </button>
+        </div>
+      </form>
+      <% } %>
+     <!--Collapse Add a comment form END-->
+  <hr>
+</div>
+</div>
+</div>
+<div class="container">
+<!--Check if there are comments, if there are none say no comments.-->
+<% if (blog.comments.length === 0) { %>
+  <p><em style="color: grey;">No comments yet.</em></p>
+    <% } %>
+
+  <!--Display comments by looping through them-->
+    <% blog.comments.forEach(function(comment) { %>
+  <div class="row">
+    <div class="col-md-12">
+      <strong>
+          <% if (currentUser && currentUser._id.equals(comment.author.id)) { %>
+        <!--If the current user owns the comment, change the color of the user icon-->
+        <span style="color: orange;" class="glyphicon glyphicon-user" aria-hidden="true"></span>
+          <% } else { %>
+        <!--Else just display it black-->
+        <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+          <% } %>
+        <!--Print out the author username-->
+        <i class="fas fa-user"></i> <%= comment.author.username %>
+      </strong>
+
+      <!--Show when the comment was made-->
+      <span class="pull-right"><%= moment(comment.created).fromNow() %></span>
+
+      <!--Printing the comment-->
+      <p><%= comment.content %></p>
+
+      <!--If the visitor is logged in and the owner of the comment, show the edit and delete buttons-->
+        <% if (currentUser && currentUser._id.equals(comment.author.id) || currentUser
+        && currentUser.isAdmin) { %>
+          <!--Edit button used for collapsing the edit comment form-->
+      <a class="btn btn-xs btn-warning" role="button" data-toggle="collapse" data-target="#collapseEdit<%= comment._id %>" aria-expanded="false" aria-controls="collapse<%= comment._id %>">
+        Edit</a>
+
+      <!--Delete comment button-->
+      <form id="delete-form" action="/blogs/<%= blog._id %>/comment/<%= comment._id %>?_method=DELETE" method="POST" style="display: inline;">
+        <button class="btn btn-xs btn-danger">Delete</button>
+      </form>
+
+      <!--Edit comment form-->
+      <div class="collapse container" id="collapseEdit<%= comment._id %>">
+        <div class="well formgrp" style="border-left: 5px solid rgb(121, 63, 63); margin-top: 15px;">
+          <h3>Edit your comment <span class="glyphicon glyphicon-edit" aria-hidden="true"></span></h3>
+          <form id="edit-comment-form<%= comment._id %>" action="/blogs/<%= blog._id %>/comment/<%= comment._id %>?_method=PUT" method="POST">
+            <div class="form-group">
+              <input class="form-control myctrl" type="text" disabled value="<%= currentUser.username %>">
+            </div>
+            <div class="form-group">
+              <textarea class="form-control myctrl" name="content[content]" placeholder="Your comment text..." form="edit-comment-form<%= comment._id %>" rows="5" cols="70"><%= comment.content %></textarea>
+            </div>
+            <div class="form-group">
+              <button class="btn btn-warning btn-sm">Edit comment <span class="glyphicon glyphicon-comment" aria-hidden="true"></span></button>
+            </div>
+          </form>
+        </div>
+      </div>
+        <% } %>
+      <hr>
+    </div>
+  </div>
+    <% }) %>
+</div>
+</div>
+<!--COMMENT SECTION END-->
+<%- include ('partials/info') -%>
+<%- include ('partials/footer') -%>

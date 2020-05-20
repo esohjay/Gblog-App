@@ -9,6 +9,9 @@ var userSchema = new mongoose.Schema({
   phone: String,
   city: String,
   password: String,
+  isAdmin: { type: Boolean, default: false },
+  resetPasswordToken: String,
+  resetPasswordExpires: Date,
 });
 
 userSchema.plugin(passportLocalMongoose);

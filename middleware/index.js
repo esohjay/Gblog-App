@@ -9,7 +9,8 @@ middlewareObj.checkBlogOwnership = function (req, res, next) {
       res.redirect("back");
     } else if (
       //does user created the campground
-      foundBlog.author.id.equals(req.user._id)
+      foundBlog.author.id.equals(req.user._id) ||
+      req.user.isAdmin
     ) {
       req.blog = foundBlog;
       next();
@@ -36,7 +37,8 @@ middlewareObj.checkCommentOwnership = function (req, res, next) {
       res.redirect("back");
     } else if (
       //does user created the comment
-      foundComment.author.id.equals(req.user._id)
+      foundComment.author.id.equals(req.user._id) ||
+      req.user.isAdmin
     ) {
       req.comment = foundComment;
       next();
