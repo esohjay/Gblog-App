@@ -34,7 +34,7 @@ var express = require("express"),
   });*/
 
 mongoose
-  .connect(process.enc.DB_URL, {
+  .connect(process.env.DB_URL, {
     useUnifiedTopology: true,
     useNewUrlParser: true,
     useCreateIndex: true,
