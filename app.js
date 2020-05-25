@@ -81,12 +81,12 @@ app.use(function (req, res, next) {
 
 //New route
 
-/*app.listen(process.env.PORT, function () {
+app.listen(process.env.PORT, function () {
   console.log("Server is working");
-});*/
+});
 app.use(indexRoutes);
 app.use(commentRoutes);
 app.use(blogRoutes);
-app.listen(8080, function () {
+/*app.listen(8080, function () {
   console.log("Server is working");
-});
+});*/
