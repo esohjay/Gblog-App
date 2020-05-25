@@ -199,10 +199,10 @@ img {
 }
 .blogimg {
   object-fit: cover;
-  height: 600px;
+  height: 500px;
   width: 80%;
   object-fit: cover;
-  margin: 2rem auto;
+  margin: 1rem auto;
 }
 .navbar {
   background-color: rgb(121, 63, 101);
@@ -229,7 +229,7 @@ img {
   bottom: 0;
 }
 .info p {
-  width: 60%;
+  width: 90%;
 }
 .socialmedia a {
   display: inline;
@@ -334,6 +334,7 @@ About
   top: 25%;
   margin-left: 0px;
   color: bisque;
+  padding: 0 1rem;
 }
 .about-p h3 {
   color: bisque;
@@ -423,6 +424,7 @@ nav {
   height: 3px;
   background: bisque;
   margin: 5px;
+  transition: 1s;
 }
 .firstnav {
   width: 35%;
@@ -435,6 +437,21 @@ nav {
   display: flex;
   justify-content: space-between;
   margin: 0 auto;
+}
+@media screen and (max-width: 1020px) {
+  .firstnav {
+    width: 40%;
+    display: flex;
+    justify-content: space-between;
+    margin: 0 auto;
+  }
+
+  .secnav {
+    width: 25%;
+    display: flex;
+    justify-content: space-between;
+    margin: 0 auto;
+  }
 }
 @media screen and (max-width: 720px) {
   body {

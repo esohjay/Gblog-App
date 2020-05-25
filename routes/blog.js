@@ -120,8 +120,8 @@ router.post(
       // add cloudinary url for the image to the campground object under image property
       // req.file.imageId = result.public_id;
       req.file.path = result.secure_url;
-      console.log(result);
-      console.log(result.secure_url);
+      //console.log(result);
+      //console.log(result.secure_url);
       //console.log(req.file.imageId);
       var newUser = {
         text: text,
@@ -153,7 +153,7 @@ router.get("/blogs/:id", function (req, res) {
       if (err) {
         res.redirect("/blogs");
       } else {
-        console.log(foundBlog);
+        //console.log(foundBlog);
         res.render("show", { blog: foundBlog });
       }
     });
@@ -194,7 +194,7 @@ router.put(
             await cloudinary.v2.uploader.destroy(blog.imageId);
             var result = cloudinary.v2.uploader.upload(req.file.path);
             blog.imageId = result.public_id;
-            blog.blogImage = result.secure_url;
+            req.file.path = result.secure_url;
           } catch (err) {
             req.flash("error", err.message);
             return res.redirect("back");
