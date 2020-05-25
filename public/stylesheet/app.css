@@ -327,7 +327,6 @@ About
   position: relative;
 }
 .about-p {
-  width: 85%;
   height: auto;
   margin: 0 auto;
   text-align: center;
@@ -367,7 +366,7 @@ About
     text-align: center;
     position: absolute;
     top: 35%;
-    margin-left: 350px;
+
     color: bisque;
   }
 }
