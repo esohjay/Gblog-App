@@ -1,13 +1,13 @@
-<%- include ('partials/header') -%>
+<%- include ('partials/header2') -%>
 <div class="container">  
 <div class="btitle" >
  
     <h3><%= blog.title %></h3>
-    <em>Created by: <%= blog.author.username %> <%= blog.author.lastname %></em>
+    <em>Created by: <%= blog.author.firstname %> <%= blog.author.lastname %></em>
     <p style="color: grey;">Last updated: <%= blog.created.toDateString() %></p>
   </div>
-  <div class="showimagecont"> 
-      <img class="img-thumbnail" src="<%= blog.showimage %>" alt="<%= blog.title %>" />
+<div class="container blogimg"> 
+      <img  class="imgthumbnail" src="<%= blog.blogImage %>" alt="<%= blog.title %>" >
     </div>
  
     <div class="blogtext">
@@ -45,7 +45,7 @@
 </h4>
 <div class="collapse container" id="collapseComment">
 <div class="card card-body formgrp" >
-  <div class="well" style="border-left: 5px solid rgb(121, 63, 63);;">
+  <div class="well" style="border-left: 5px solid rgb(121, 63, 63); padding: 1rem;">
     <% if(!currentUser) { %>
     <!--If the user is not logged in, direct him to the login page-->
     <p>

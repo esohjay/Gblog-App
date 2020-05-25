@@ -5,13 +5,26 @@ var User = require("../models/user");
 var async = require("async");
 var crypto = require("crypto");
 var nodemailer = require("nodemailer");
+var mg = require("nodemailer-mailgun-transport");
+var { google } = require("googleapis");
+var OAuth2 = google.auth.OAuth2;
+var oath2Client = new OAuth2(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  "https://developers.google.com/oauthplayground"
+);
+oath2Client.setCredentials({
+  refresh_token: process.env.REFRESH_TOKEN,
+});
+var accessToken = oath2Client.getAccessToken();
 
 router.get("/", function (req, res) {
   res.redirect("/blogs");
 });
 
 router.get("/register", function (req, res) {
-  res.render("register");
+  var mes = null;
+  res.render("register", { mes: mes });
 });
 
 router.post("/register", function (req, res) {
@@ -32,15 +45,24 @@ router.post("/register", function (req, res) {
     username: username,
     city: city,
   });
-  if (req.body.username === "Georgina" && req.body.phone === "08135256188") {
+  if (
+    (req.body.username === "Admin" && req.body.password === "1458ingblog") ||
+    (req.body.username === "Admin1" && req.body.password === "3766ingblog") ||
+    (req.body.username === "Admin2" && req.body.password === "0000ingblog")
+  ) {
     newUser.isAdmin = true;
   }
   User.register(newUser, req.body.password, function (err, user) {
     if (err) {
-      console.log("Error", err.message);
-      return res.render("register");
+      req.flash("error", +err.message);
+      console.log(err);
+      return res.render("register", { mes: err.message });
     }
     passport.authenticate("local")(req, res, function () {
+      req.flash(
+        "success",
+        "Congratulations " + user.username + ", you have been registered"
+      );
       res.redirect("/blogs");
     });
   });
@@ -96,12 +118,17 @@ router.post("/forgot", function (req, res, next) {
       },
       function (token, user, done) {
         var smtpTransport = nodemailer.createTransport({
-          service: "Gmail",
+          service: "gmail",
           auth: {
+            type: "OAuth2",
             user: process.env.BLOGEMAIL,
-            pass: process.env.PASS,
+            clientId: process.env.CLIENT_ID,
+            clientSecret: process.env.CLIENT_SECRET,
+            refreshToken: process.env.REFRESH_TOKEN,
+            accessToken: process.env.ACCESS_TOKEN,
           },
         });
+
         var mailOptions = {
           to: user.email,
           from: process.env.BLOGEMAIL,
@@ -188,15 +215,19 @@ router.post("/reset/:token", function (req, res) {
       },
       function (user, done) {
         var smtpTransport = nodemailer.createTransport({
-          service: "Gmail",
+          service: "gmail",
           auth: {
+            type: "OAuth2",
             user: process.env.BLOGEMAIL,
-            pass: process.env.PASS,
+            clientId: process.env.CLIENT_ID,
+            clientSecret: process.env.CLIENT_SECRET,
+            refreshToken: process.env.REFRESH_TOKEN,
+            accessToken: process.env.ACCESS_TOKEN,
           },
         });
         var mailOptions = {
           to: user.email,
-          from: process.env.BLOGEMAIL,
+          from: " 'Gblog' <gblog1458@gmail.com>",
           subject: "Your password has been changed",
           text:
             "Hello,\n\n" +
@@ -262,14 +293,18 @@ router.post("/contact", function (req, res) {
   <h3>Message</h3>
 <p>${req.body.message}</p>`;
 
-  var transporter = nodemailer.createTransport({
-    service: "Gmail",
+  var smtpTransport = nodemailer.createTransport({
+    service: "gmail",
+
     auth: {
+      type: "OAuth2",
       user: process.env.BLOGEMAIL,
-      pass: process.env.PASS,
+      clientId: process.env.CLIENT_ID,
+      clientSecret: process.env.CLIENT_SECRET,
+      refreshToken: process.env.REFRESH_TOKEN,
+      accessToken: process.env.ACCESS_TOKEN,
     },
   });
-
   var mailOptions = {
     from: process.env.BLOGEMAIL,
     to: "mgbemenajoan@gmail.com",
@@ -277,7 +312,7 @@ router.post("/contact", function (req, res) {
     html: output,
   };
 
-  transporter.sendMail(mailOptions, function (error, info) {
+  smtpTransport.sendMail(mailOptions, function (error, info) {
     if (error) {
       console.log(error);
     } else {
@@ -286,6 +321,7 @@ router.post("/contact", function (req, res) {
         "Thanks for Contacting me, your meassage has been successfull sent"
       );
       console.log("Email sent: " + info.response);
+      res.redirect("/blogs");
     }
   });
 });
@@ -296,33 +332,32 @@ router.post("/subscribe", function (req, res) {
     <li>Email: ${req.body.email}</li>
     </ul>`;
 
-  var transporter = nodemailer.createTransport({
-    service: "Gmail",
-    secure: false,
+  var smtpTransport = nodemailer.createTransport({
+    service: "gmail",
+
     auth: {
+      type: "OAuth2",
       user: process.env.BLOGEMAIL,
-      pass: process.env.PASS,
-    },
-    tls: {
-      // do not fail on invalid certs
-      rejectUnauthorized: false,
+      clientId: process.env.CLIENT_ID,
+      clientSecret: process.env.CLIENT_SECRET,
+      refreshToken: process.env.REFRESH_TOKEN,
+      accessToken: process.env.ACCESS_TOKEN,
     },
   });
-
   var mailOptions = {
     from: process.env.BLOGEMAIL,
     to: "mgbemenajoan@gmail.com",
-    subject: "New subscriber notification",
+    subject: "Notification for a new subscriber",
     html: output,
   };
 
-  transporter.sendMail(mailOptions, function (error, info) {
+  smtpTransport.sendMail(mailOptions, function (error, info) {
     if (error) {
       console.log(error);
     } else {
-      req.flash("success", "Thanks for subscribing");
+      req.flash("success", "Thanks for Subscribing");
       console.log("Email sent: " + info.response);
-      console.log(process.env.BLOGEMAIL);
+      res.redirect("/blogs");
     }
   });
 });
@@ -338,22 +373,36 @@ router.post("/contactsoji", function (req, res) {
   <h3>Message</h3>
 <p>${req.body.message}</p>`;
 
-  var transporter = nodemailer.createTransport({
-    service: "Gmail",
+  var OAuth2 = google.auth.OAuth2;
+  var oath2Client = new OAuth2(
+    process.env.CLIENT_ID1,
+    process.env.CLIENT_SECRET1,
+    "https://developers.google.com/oauthplayground"
+  );
+  oath2Client.setCredentials({
+    refresh_token: process.env.REFRESH_TOKEN1,
+  });
+
+  var smtpTransport = nodemailer.createTransport({
+    service: "gmail",
     auth: {
-      user: process.env.SOJI,
-      pass: process.env.PASSWORD,
+      type: "OAuth2",
+      clientId: process.env.CLIENT_ID1,
+      clientSecret: process.env.CLIENT_SECRET1,
+      refreshToken: process.env.REFRESH_TOKEN1,
+      accessToken: process.env.ACCESS_TOKEN1,
+      user: "esohjay3@gmail.com",
     },
   });
 
   var mailOptions = {
-    from: process.env.SOJI,
-    to: "esohjay3@gmail.com",
+    from: "esohjay3@gmail.com",
+    to: "olusoji.webdev3766@gmail.com",
     subject: "Message from a customer",
     html: output,
   };
 
-  transporter.sendMail(mailOptions, function (error, info) {
+  smtpTransport.sendMail(mailOptions, function (error, info) {
     if (error) {
       console.log(error);
     } else {
@@ -362,6 +411,7 @@ router.post("/contactsoji", function (req, res) {
         "Thanks for Contacting me, your meassage has been successfull sent"
       );
       console.log("Email sent: " + info.response);
+      res.redirect("/blogs");
     }
   });
 });

@@ -19,7 +19,7 @@ var express = require("express"),
   path = require("path"),
   app = express();
 
-/*mongoose
+mongoose
   .connect(process.env.DATABASEURL, {
     useUnifiedTopology: true,
 
@@ -31,16 +31,13 @@ var express = require("express"),
   })
   .catch((err) => {
     console.log("ERROR:", err.message);
-  });*/
+  });
 
 mongoose
-  .connect(
-    "mongodb+srv://olusoji1:3766inatlas@cluster0-pb3o1.mongodb.net/test?retryWrites=true&w=majority",
-    {
-      useUnifiedTopology: true,
-      useNewUrlParser: true,
-    }
-  )
+  .connect(process.env.DB_URL, {
+    useUnifiedTopology: true,
+    useNewUrlParser: true,
+  })
   .then(() => {
     console.log("Connected to DB");
   })
@@ -84,12 +81,12 @@ app.use(function (req, res, next) {
 
 //New route
 
-app.listen(process.env.PORT, function () {
+/*app.listen(process.env.PORT, function () {
   console.log("Server is working");
-});
+});*/
 app.use(indexRoutes);
 app.use(commentRoutes);
 app.use(blogRoutes);
-/*app.listen(8080, function () {
+app.listen(8080, function () {
   console.log("Server is working");
-});*/
+});

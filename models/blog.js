@@ -2,7 +2,8 @@ var mongoose = require("mongoose");
 var blogSchema = new mongoose.Schema({
   title: String,
   text: String,
-  showimage: String,
+  category: String,
+  blogImage: String,
   author: {
     id: {
       type: mongoose.Schema.Types.ObjectId,
@@ -20,7 +21,7 @@ var blogSchema = new mongoose.Schema({
     },
   ],
   created: { type: Date, default: Date.now },
-  blogImage: String,
+
   imageId: String,
 });
 module.exports = mongoose.model("Blog", blogSchema);

@@ -65,9 +65,15 @@
     transform: scale(0.8);
   }
 }
-/*.subbtn {
+.subbtn {
   animation: bounce 2s ease infinite;
-}*/
+}
+.mes {
+  background: rgb(201, 54, 54);
+  color: bisque;
+  margin: 0 auto;
+  text-align: center;
+}
 .section {
   border-radius: 8px;
   transition: 1s;
@@ -179,9 +185,18 @@ img {
   padding: 2rem;
   margin-bottom: 1rem;
 }
-.img-thumbnail {
-  height: 600px;
+.imgthumbnail {
   object-fit: cover;
+  height: 100%;
+  width: auto;
+  margin: 0 auto;
+}
+.blogimg {
+  object-fit: cover;
+  height: 600px;
+  width: 80%;
+  object-fit: cover;
+  margin: 2rem auto;
 }
 .navbar {
   background-color: rgb(121, 63, 101);
@@ -232,6 +247,9 @@ body {
   padding: 0;
   margin: 0;
   min-height: 100%;
+  overflow: hidden;
+  overflow-y: scroll;
+  scroll-behavior: smooth;
 }
 body::after {
   content: "";
@@ -268,7 +286,7 @@ About
 ===================*/
 .abt-section {
   margin-top: 200px;
-  height: 400px;
+  height: 450px;
   width: 100%;
   background: linear-gradient(
     rgba(189, 112, 159, 0.712),
@@ -311,7 +329,6 @@ About
   top: 25%;
   margin-left: 50px;
   color: bisque;
-  font-size: 1.3rem;
 }
 .about-p h3 {
   color: bisque;
