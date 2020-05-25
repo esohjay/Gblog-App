@@ -122,12 +122,18 @@ img {
   margin-left: 30%;
   margin-right: 0%;
 }
+.dob {
+  margin-left: 75px;
+}
 @media screen and (min-width: 720px) {
   .formgrp {
     float: left;
     width: 50%;
     margin: 0;
     padding: 20px;
+  }
+  .dob {
+    margin-left: 158px;
   }
 }
 .contact {
@@ -166,7 +172,7 @@ img {
   background-color: rgb(121, 63, 63);
   border: 2px solid bisque;
   color: bisque;
-  transition: 2s;
+  transition: 1s;
   border-radius: 10px;
 }
 .article-text {
@@ -286,7 +292,7 @@ About
 ===================*/
 .abt-section {
   margin-top: 200px;
-  height: 520px;
+  height: 550px;
   width: 100%;
   background: linear-gradient(
     rgba(189, 112, 159, 0.712),
@@ -321,7 +327,7 @@ About
   position: relative;
 }
 .about-p {
-  width: 80%;
+  width: 90%;
   height: auto;
   margin: 0 auto;
   text-align: center;
@@ -391,6 +397,7 @@ nav {
   z-index: 2;
   padding: 5px;
   margin: 0 auto;
+  transition: 1s;
 }
 .navlinks li {
   list-style: none;
@@ -443,7 +450,7 @@ nav {
     background: rgb(121, 63, 101);
     z-index: 2;
     display: none;
-    transition: transform 2s ease-in;
+    transition: 2s;
     width: 50%;
     opacity: 0.95;
 
@@ -455,6 +462,7 @@ nav {
     align-items: center;
     height: 30vh;
     width: auto;
+    transition: 1s;
   }
   .secnav {
     display: flex;
@@ -462,6 +470,7 @@ nav {
     align-items: center;
     height: 12vh;
     width: auto;
+    transition: 1s;
   }
 
   .burger {
@@ -474,15 +483,19 @@ nav {
   display: flex;
   flex-direction: column;
   align-items: center;
+  transform: 1s;
 
   /* transform: translateX(0%);*/
 }
 .toggle .one {
   transform: rotate(-45deg) translate(-5px, 6px);
+  transition: 1s;
 }
 .toggle .two {
   opacity: 0;
+  transition: 1s;
 }
 .toggle .three {
   transform: rotate(45deg) translate(-5px, -6px);
+  transition: 1s;
 }
